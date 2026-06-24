@@ -118,6 +118,28 @@ const useWalletMenu = () => {
   return { menuRef, isOpen, setIsOpen }
 }
 
+const useLatency = () => {
+  const [latency, setLatency] = useState(null)
+
+  useEffect(() => {
+    const ping = async () => {
+      const t0 = Date.now()
+      try {
+        await fetch(`${API_BASE}/health`, { cache: 'no-store' })
+        setLatency(Date.now() - t0)
+      } catch {
+        setLatency(null)
+      }
+    }
+
+    ping()
+    const id = setInterval(ping, 30000)
+    return () => clearInterval(id)
+  }, [])
+
+  return latency
+}
+
 function App() {
   const [activeView, setActiveView] = useState('dashboard')
   const [userPublicKey, setUserPublicKey] = useState('')
@@ -341,6 +363,7 @@ function Dashboard({
 }) {
   const [isNavOpen, setIsNavOpen] = useNavState()
   const { menuRef, isOpen: isWalletMenuOpen, setIsOpen: setIsWalletMenuOpen } = useWalletMenu()
+  const latency = useLatency()
   const closeNav = () => {
     sessionStorage.setItem(NAV_STORAGE_KEY, 'false')
     setIsNavOpen(false)
@@ -593,8 +616,10 @@ function Dashboard({
           )}
         </div>
         <div className="sidebar-card">
-          <h3>Network pulse</h3>
-          <p>Testnet status is healthy. Avg confirmation 3.9s.</p>
+          <h3>API latency</h3>
+          <p className="latency-gauge">
+            {latency === null ? '— ms' : `${latency} ms`}
+          </p>
         </div>
         <div className="sidebar-card">
           <h3>Support</h3>
@@ -815,6 +840,7 @@ function HelpPage({
 }) {
   const [isNavOpen, setIsNavOpen] = useNavState()
   const [activeHelpAction, setActiveHelpAction] = useState('')
+  const latency = useLatency()
   const closeNav = () => {
     sessionStorage.setItem(NAV_STORAGE_KEY, 'false')
     setIsNavOpen(false)
@@ -884,8 +910,10 @@ function HelpPage({
           )}
         </div>
         <div className="sidebar-card">
-          <h3>Support hours</h3>
-          <p>Live help is active Mon-Fri, 09:00-18:00 UTC.</p>
+          <h3>API latency</h3>
+          <p className="latency-gauge">
+            {latency === null ? '— ms' : `${latency} ms`}
+          </p>
         </div>
         <div className="sidebar-card">
           <h3>Contact</h3>
@@ -987,6 +1015,7 @@ function AnalyticsPage({
     successRate: null,
   })
   const { menuRef, isOpen: isWalletMenuOpen, setIsOpen: setIsWalletMenuOpen } = useWalletMenu()
+  const latency = useLatency()
   const closeNav = () => {
     sessionStorage.setItem(NAV_STORAGE_KEY, 'false')
     setIsNavOpen(false)
@@ -1239,8 +1268,10 @@ function AnalyticsPage({
           )}
         </div>
         <div className="sidebar-card">
-          <h3>Signal</h3>
-          <p>Routing data is refreshed every 15 minutes.</p>
+          <h3>API latency</h3>
+          <p className="latency-gauge">
+            {latency === null ? '— ms' : `${latency} ms`}
+          </p>
         </div>
         <div className="sidebar-card">
           <h3>Exports</h3>
@@ -1361,6 +1392,7 @@ function HistoryPage({
   const [expandedId, setExpandedId] = useState(null)
   const [refreshIndex, setRefreshIndex] = useState(0)
   const { menuRef, isOpen: isWalletMenuOpen, setIsOpen: setIsWalletMenuOpen } = useWalletMenu()
+  const latency = useLatency()
   const closeNav = () => {
     sessionStorage.setItem(NAV_STORAGE_KEY, 'false')
     setIsNavOpen(false)
@@ -1537,8 +1569,10 @@ function HistoryPage({
           )}
         </div>
         <div className="sidebar-card">
-          <h3>Timeline</h3>
-          <p>Payments are archived for 90 days.</p>
+          <h3>API latency</h3>
+          <p className="latency-gauge">
+            {latency === null ? '— ms' : `${latency} ms`}
+          </p>
         </div>
         <div className="sidebar-card">
           <h3>Filters</h3>

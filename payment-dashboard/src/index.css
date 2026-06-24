@@ -251,6 +251,13 @@ body::before {
   color: #cbd5f5;
 }
 
+.latency-gauge {
+  font-size: 20px !important;
+  font-weight: 600;
+  color: #38bdf8 !important;
+  letter-spacing: 0.5px;
+}
+
 .disconnect-button {
   margin-top: auto;
   border: 1px solid rgba(148, 163, 184, 0.35);
